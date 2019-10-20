@@ -10,6 +10,7 @@
 #include <numeric>
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -17,6 +18,7 @@
 namespace utils {
 
 	bool dirExists(const std::string & path);
+    std::string getFileNameWithoutExtension(const std::string & path);
 
 };
 

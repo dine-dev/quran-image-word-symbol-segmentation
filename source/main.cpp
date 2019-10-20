@@ -16,7 +16,7 @@ int main(int argc, char ** argv) {
     bool showIntermediate = true;
 
     std::list<int> pageList(604);
-    std::iota(pageList.begin(), pageList.end(), 293);
+    std::iota(pageList.begin(), pageList.end(), 1);
 
     if (0){
         std::list<int> pageIndexRequireAdditionnalCropLeft({26, 64, 92, 268, 344});
@@ -61,7 +61,7 @@ int main(int argc, char ** argv) {
 
 
     for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-        analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", tplsMatchSymbol, "resources/match.txt", showIntermediate);
+        analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", tplsMatchSymbol, "", showIntermediate);
     }
 
     return 0;

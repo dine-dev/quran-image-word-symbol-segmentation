@@ -59,8 +59,12 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
 
     if(!pathMatchCoordinate.empty()) {
 
+        std::ofstream outfile;
+        outfile.open(pathMatchCoordinate, std::ios_base::app);
+
         for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
-            std::cout << pathImageQuranPage << " "
+            //std::cout
+            outfile << utils::getFileNameWithoutExtension(pathImageQuranPage) << " "
             << indr << " "
             << matchSymbolRectVector[indr].tl().x << " "
             << matchSymbolRectVector[indr].tl().y << " "
@@ -77,8 +81,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
             cv::rectangle(img_disp, matchSymbolRectVector[indr], cv::Scalar(0,0,255), 3);
 
         }
-        cv::namedWindow("Result window", cv::WINDOW_NORMAL);
-        cv::resizeWindow("Result window", 600,1000);
+        cv::namedWindow("Result window", cv::WINDOW_AUTOSIZE);
         cv::imshow( "Result window", img_disp);
         cv::waitKey(0);
     }

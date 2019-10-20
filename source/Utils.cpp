@@ -14,6 +14,13 @@ bool utils::dirExists(const std::string & path) {
 	}
 }
 
+std::string utils::getFileNameWithoutExtension(const std::string & path) {
+	std::string base_filename = path.substr(path.find_last_of("/\\") + 1);
+	std::string::size_type const pos(base_filename.find_last_of('.'));
+	base_filename = base_filename.substr(0, pos);
+	return base_filename;
+}
+
 
 // void utils::read_record() {
 
