@@ -88,3 +88,34 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
 
 }
 
+
+void ImageAnalyzer::segmentWord(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate) {
+
+    cv::Mat3b img = cv::imread(pathImageQuranPage, cv::IMREAD_COLOR), img_disp = img.clone();
+    //cv::rectangle(img_disp, cv::Point(481,83), cv::Point(523,137), cv::Scalar( 255, 0, 0 ), 1);
+    //cv::rectangle(img_disp, cv::Point(18,23), cv::Point(623,80), cv::Scalar( 255, 0, 0 ), 1);
+
+    cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
+    cv::Point pts[6] = {
+        cv::Point(18, 23),
+        cv::Point(623, 23),
+        cv::Point(623, 137),
+        cv::Point(523, 137),
+        cv::Point(523, 80),
+        cv::Point(18, 80)
+    };
+
+    cv::fillConvexPoly( mask, pts, 6, cv::Scalar(255) );
+    
+    cv::Mat imageDest = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
+    imageDest.setTo(cv::Scalar(255,255,255));
+    img.copyTo(imageDest, mask); 
+    cv::imshow("mask",mask);
+    cv::imshow("imageDest",imageDest);
+    cv::waitKey(0);
+}
+
+
+
+
+

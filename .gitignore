@@ -35,6 +35,7 @@
 resources/
 build/
 obj/
+build/
 
 # os dependent
 .DS_Store

@@ -13,6 +13,7 @@ int main(int argc, char ** argv) {
     }
 
     ImageProcessor processor;
+    ImageAnalyzer analyzer;
     bool showIntermediate = true;
 
     std::list<int> pageList(604);
@@ -21,7 +22,7 @@ int main(int argc, char ** argv) {
     if (0){
         std::list<int> pageIndexRequireAdditionnalCropLeft({26, 64, 92, 268, 344});
         std::list<int> pageIndexRequireAdditionnalCropRight({77, 251});
-    // Make iterate point to begining and incerement it one by one till it reaches the end of list.
+    // Make iterate point to begining and increment it one by one till it reaches the end of list.
         for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
 
         //std::cout << (*it) << std::endl;
@@ -40,8 +41,8 @@ int main(int argc, char ** argv) {
         }
     }
 
-    ImageAnalyzer analyzer;
-    std::list<ImageAnalyzer::MatchTemplate> tplsMatchSymbol({
+    if(0) {
+        std::list<ImageAnalyzer::MatchTemplate> tplsMatchSymbol({
             {"resources/template_match/end-of-ayah-symbol-first-page.jpg", 0.43, "ayah", false},
             {"resources/template_match/end-of-ayah-symbol-second-page.jpg", 0.43, "ayah", false},
             {"resources/template_match/end-of-ayah-symbol-1.jpg", 0.43, "ayah", false},
@@ -57,12 +58,16 @@ int main(int argc, char ** argv) {
             {"resources/template_match/basmalah-second-page.jpg", 0.7, "basmalah", true},
             {"resources/template_match/roubou3.jpg", 0.7, "roubou3", true},
             {"resources/template_match/soujoud.jpg", 0.7, "soujoud", true},
-    });
+        });
 
 
-    for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-        analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", tplsMatchSymbol, "", showIntermediate);
+        for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
+            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", tplsMatchSymbol, "", showIntermediate);
+        }
     }
+
+    analyzer.segmentWord("resources/hafs_whitened_croped/3.jpg", "resources/match.txt");
+    
 
     return 0;
 }

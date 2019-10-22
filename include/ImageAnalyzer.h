@@ -18,6 +18,7 @@ public:
     ~ImageAnalyzer(){};
     bool rectangleHasIntersection (const cv::Rect & lhs, const cv::Rect & rhs);
     void findSymbolInImage(const std::string & pathImageQuranPage, const std::list<MatchTemplate> & pathEndOfAyahSymbol, const std::string & pathMatchCoordinate = "", bool showIntermediate = false);
+    void segmentWord(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate);
 
 };
 
