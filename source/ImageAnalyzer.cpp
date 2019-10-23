@@ -89,7 +89,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
 }
 
 
-void ImageAnalyzer::segmentWord(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate) {
+void ImageAnalyzer::segmentWordInPage(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate) {
 
     cv::Mat3b img = cv::imread(pathImageQuranPage, cv::IMREAD_COLOR), img_disp = img.clone();
     //cv::rectangle(img_disp, cv::Point(481,83), cv::Point(523,137), cv::Scalar( 255, 0, 0 ), 1);
