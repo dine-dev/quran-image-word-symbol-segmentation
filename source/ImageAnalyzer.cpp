@@ -110,8 +110,81 @@ void ImageAnalyzer::segmentWord(const std::string & pathImageQuranPage, const st
     cv::Mat imageDest = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
     imageDest.setTo(cv::Scalar(255,255,255));
     img.copyTo(imageDest, mask); 
-    cv::imshow("mask",mask);
-    cv::imshow("imageDest",imageDest);
+    
+    //cv::imshow("mask",mask);
+    //cv::imshow("imageDest",imageDest);
+
+    cv::Mat src_gray_thr;
+    cv::cvtColor(imageDest, src_gray_thr, cv::COLOR_BGR2GRAY);
+
+    cv::threshold( src_gray_thr, src_gray_thr, 240, 255, cv::THRESH_BINARY);
+    
+    // invert black and white
+    cv::bitwise_not ( src_gray_thr, src_gray_thr );
+    
+
+    cv::Mat kernel = (cv::Mat_<uchar>(9,9) << 0,0,0,0,1,0,0,0,0,
+                                              0,0,1,1,1,0,0,0,0,
+                                              0,0,0,1,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,1,1,1,1,1,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0,
+                                              0,0,0,0,1,0,0,0,0);
+
+    cv::Mat dilation_dst;
+    cv::dilate( src_gray_thr, dilation_dst, kernel);
+
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(dilation_dst, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    std::vector<cv::Rect> contour_rect;
+
+    // get bounding box of contours
+    for (size_t idx = 0; idx < contours.size(); idx++) {
+        cv::Rect rect = cv::boundingRect(contours[idx]);
+
+        // check intersection of curret rectangle with other present rectangle
+        std::vector<cv::Rect>::iterator it = std::find_if(contour_rect.begin(), contour_rect.end(),
+                [=] (const cv::Rect & cRect) { return rectangleHasIntersection(cRect,rect); } );
+        
+        // if curretn rectangle does not have intersection with other rectangles just add it
+        if(it == contour_rect.end()){
+            contour_rect.push_back(rect);
+        }
+        // if current rectangle has an intersection with other rectangles 
+        else {
+            cv::Rect iRect = (*it);
+
+            // if the intersection is exactly rectangle in vector that mean that rect contains the rectangle in vector
+            if ( iRect == (iRect & rect) ) {
+                (*it) = rect;
+            }
+            // if the intersection is exactly current rectangle that means that that the rectangle in vector contains rect contain
+            else if ( rect == (iRect & rect) ){
+                continue;
+            }
+            else {
+                contour_rect.push_back(rect);
+            }
+
+        }
+        
+        // Draw the contours rectangle
+        cv::drawContours( img, contours, idx, cv::Scalar(0, 0, 255), 1, 8, hierarchy, 0);
+        //cv::rectangle(img, rect.tl(), rect.br(), cv::Scalar(255, 0, 0));
+    }
+
+    for (size_t idx = 0; idx < contour_rect.size(); idx++) {
+        
+        // Draw the contours rectangle
+        cv::rectangle(img, contour_rect[idx].tl(), contour_rect[idx].br(), cv::Scalar(255, 0, 0));
+    }    
+    
+    cv::imshow("imageDest",src_gray_thr);
+    cv::imshow("dilation_dst",dilation_dst);
+    cv::imshow("img",img);
     cv::waitKey(0);
 }
 
