@@ -5,6 +5,7 @@ Page::Page(int pageNumber, std::string imageFilePath) : mPageNumber(pageNumber),
     processImage();
     analyzeImage();
     buildRect();
+    sortSymbolRects();
 };
 
 Page::~Page() {};
@@ -20,20 +21,22 @@ void Page::showQuranPage(bool displayAllProcessedImage) {
     }
 	
     cv::imshow( "processed image", mProcessedImage);
+    return;
 }
 
 void Page::showSymbols() {
     cv::Mat img_disp = mProcessedImage.clone();
     for (size_t indR = 0; indR < mMatchSymbols.size(); ++indR) {
         cv::rectangle(img_disp, mMatchSymbols[indR].rect, cv::Scalar(0,0,255), 3);
+        cv::imshow( "Result window", img_disp);
+        cv::waitKey(0);
     }
     cv::imshow( "Result window", img_disp);
+    return;
 }
 
 void Page::init() {
 	// init image processor and analyzer
-	mProcessor = ImageProcessor();
-    mAnalyzer = ImageAnalyzer();
 }
 
 void Page::processImage() {
@@ -42,17 +45,17 @@ void Page::processImage() {
 
 	// whiten background
 	cv::Scalar minHSVthr(24, 31, 250), maxHSVthr(35, 50, 255);
-    mProcessor.whitenBackground(mRawImage, minHSVthr, maxHSVthr, mPreprocessedImages);
+    ImageProcessor::whitenBackground(mRawImage, minHSVthr, maxHSVthr, mPreprocessedImages);
 
     // crop frame
-    mProcessor.cropToTextFrame(mPreprocessedImages[0], mPreprocessedImages);
+    ImageProcessor::cropToTextFrame(mPreprocessedImages[0], mPreprocessedImages);
 
     // additionnal crop if required
     if (std::find(pageIndexRequireAdditionnalCropLeft.cbegin(), pageIndexRequireAdditionnalCropLeft.cend(), mPageNumber) != pageIndexRequireAdditionnalCropLeft.cend()) {
-    	mProcessor.additionnalCrop(mPreprocessedImages[1], "left", "resources/template_match/left-border.jpg", mPreprocessedImages);
+    	ImageProcessor::additionnalCrop(mPreprocessedImages[1], "left", "resources/template_match/left-border.jpg", mPreprocessedImages);
     }
     if (std::find(pageIndexRequireAdditionnalCropRight.cbegin(), pageIndexRequireAdditionnalCropRight.cend(), mPageNumber) != pageIndexRequireAdditionnalCropRight.cend()) {
-    	mProcessor.additionnalCrop(mPreprocessedImages[1], "right", "resources/template_match/right-border.jpg", mPreprocessedImages);
+    	ImageProcessor::additionnalCrop(mPreprocessedImages[1], "right", "resources/template_match/right-border.jpg", mPreprocessedImages);
     }
 
     // image to be displayed (only copy reference)
@@ -61,7 +64,7 @@ void Page::processImage() {
 }
 
 void Page::analyzeImage() {
-    mAnalyzer.findSymbolInImage(mProcessedImage, ImageAnalyzer::tplsMatchSymbol, mMatchSymbolResult, true);
+    ImageAnalyzer::findSymbolInImage(mProcessedImage, ImageAnalyzer::tplsMatchSymbol, mMatchSymbolResult, true);
 }
 
 void Page::buildRect() {
@@ -80,6 +83,12 @@ void Page::buildRect() {
         }
     }
 }
+
+void Page::sortSymbolRects() {
+    //std::cout << (mMatchSymbols[0].rect.tl().y < mMatchSymbols[1].rect.tl().y) << std::endl;
+    std::sort(mMatchSymbols.begin(), mMatchSymbols.end());
+}
+
 
 
 

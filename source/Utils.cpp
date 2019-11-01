@@ -22,65 +22,43 @@ std::string utils::getFileNameWithoutExtension(const std::string & path) {
 }
 
 
-// void utils::read_record() {
+void utils::read_record(const std::string & filePath, std::vector<std::string> & row) {
 
-//     // File pointer
-// 	fstream fin;
+	std::fstream fin;
 
-//     // Open an existing file
-// 	fin.open("reportcard.csv", ios::in);
+    // Open an existing file
+	fin.open(filePath, std::ios::in);
 
-//     // Get the roll number
-//     // of which the data is required
-// 	int rollnum, roll2, count = 0;
-// 	cout << "Enter the roll number "
-// 	<< "of the student to display details: ";
-// 	cin >> rollnum;
+    // Read the Data from the file as string Vector
+	std::string line, temp;
 
-//     // Read the Data from the file
-//     // as String Vector
-// 	vector<string> row;
-// 	string line, word, temp;
+	while (fin >> temp) {
 
-// 	while (fin >> temp) {
+        // read an entire row and
+        // store it in a string variable 'line'
+		getline(fin, line);
+		std::cout << line << std::endl;
+		row.push_back(line);
+        
+	}
 
-// 		row.clear();
+}
 
-//         // read an entire row and
-//         // store it in a string variable 'line'
-// 		getline(fin, line);
+bool utils::comp(const std::vector<cv::Point> & contour_lhs, const std::vector<cv::Point> & contour_rhs) {
+    return (cv::contourArea(contour_lhs) < cv::contourArea(contour_rhs));
+}
 
-//         // used for breaking words
-// 		stringstream s(line);
+void utils::split_string(const std::string & str, const std::string & delimiter, std::vector<std::string> & splited_string) {
 
-//         // read every column data of a row and
-//         // store it in a string variable, 'word'
-// 		while (getline(s, word, ', ')) {
-
-//             // add all the column data
-//             // of a row to a vector
-// 			row.push_back(word);
-// 		}
-
-//         // convert string to integer for comparision
-// 		roll2 = stoi(row[0]);
-
-//         // Compare the roll number
-// 		if (roll2 == rollnum) {
-
-//             // Print the found data
-// 			count = 1;
-// 			cout << "Details of Roll " << row[0] << " : \n";
-// 			cout << "Name: " << row[1] << "\n";
-// 			cout << "Maths: " << row[2] << "\n";
-// 			cout << "Physics: " << row[3] << "\n";
-// 			cout << "Chemistry: " << row[4] << "\n";
-// 			cout << "Biology: " << row[5] << "\n";
-// 			break;
-// 		}
-// 	}
-
-// 	if (count == 0) {
-// 		cout << "Record not found\n";
-// 	}
-// }
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+    while ((pos = str.find(delimiter, prev)) != std::string::npos) {
+        splited_string.push_back(str.substr(prev, pos - prev));
+        prev = pos + 1;
+    }
+ 
+    // To get the last substring (or only, if delimiter is not found)
+    splited_string.push_back(str.substr(prev));
+ 
+    return;
+}

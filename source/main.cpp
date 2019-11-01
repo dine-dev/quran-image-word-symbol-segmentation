@@ -13,8 +13,6 @@ int main(int argc, char ** argv) {
         return -1;
     }
 
-    ImageProcessor processor;
-    ImageAnalyzer analyzer;
     bool showIntermediate = true;
 
     std::list<int> pageList(604);
@@ -29,15 +27,15 @@ int main(int argc, char ** argv) {
         //std::cout << (*it) << std::endl;
 
             cv::Scalar minHSVthr(24, 31, 250), maxHSVthr(35, 50, 255);
-            processor.whitenBackground("resources/hafs/"+ std::to_string(*it) +".jpg", minHSVthr, maxHSVthr, showIntermediate, "resources/hafs_whitened/"+ std::to_string(*it) +".jpg");
+            ImageProcessor::whitenBackground("resources/hafs/"+ std::to_string(*it) +".jpg", minHSVthr, maxHSVthr, showIntermediate, "resources/hafs_whitened/"+ std::to_string(*it) +".jpg");
 
-            processor.cropToTextFrame("resources/hafs_whitened/"+ std::to_string(*it) +".jpg", showIntermediate, "resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg");
+            ImageProcessor::cropToTextFrame("resources/hafs_whitened/"+ std::to_string(*it) +".jpg", showIntermediate, "resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg");
 
             if (std::find(pageIndexRequireAdditionnalCropLeft.cbegin(), pageIndexRequireAdditionnalCropLeft.cend(), (*it)) != pageIndexRequireAdditionnalCropLeft.cend()) {
-                processor.additionnalCrop("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", "left", "resources/template_match/left-border.jpg", showIntermediate);
+                ImageProcessor::additionnalCrop("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", "left", "resources/template_match/left-border.jpg", showIntermediate);
             }
             else if (std::find(pageIndexRequireAdditionnalCropRight.cbegin(), pageIndexRequireAdditionnalCropRight.cend(), (*it)) != pageIndexRequireAdditionnalCropRight.cend()) {
-                processor.additionnalCrop("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", "right", "resources/template_match/right-border.jpg", showIntermediate);
+                ImageProcessor::additionnalCrop("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", "right", "resources/template_match/right-border.jpg", showIntermediate);
             }
         }
     }
@@ -45,14 +43,14 @@ int main(int argc, char ** argv) {
     if(0) {
 
         for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
+            ImageAnalyzer::findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
         }
     }
 
     if(1) {
-        pageList = {77,332,367,446,575,582};
+        pageList = {582};
         for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
+            ImageAnalyzer::findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
             Page page((*it), "resources/hafs/"+ std::to_string(*it) + ".jpg");
             //page.showQuranPage(false);
             page.showSymbols();

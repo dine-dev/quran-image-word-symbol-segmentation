@@ -12,6 +12,18 @@ public:
     struct MatchSymbol {
         cv::Rect rect;
         std::string type;
+
+        bool operator < (const MatchSymbol & ms) const {
+            int offset = 10;
+            // if one symbole is significantly higher than another then the higher is the first
+            if( std::abs(rect.tl().y - ms.rect.tl().y) > offset) {
+                return (rect.tl().y < ms.rect.tl().y);
+            }
+            else {
+                return (rect.tl().x > ms.rect.tl().x);
+            }
+            
+        }
     };
 
     Page(int pageNumber, std::string imageFilePath);
@@ -31,13 +43,12 @@ private:
     cv::Mat mRawImage;
     cv::Mat mProcessedImage;
     std::string mMatchSymbolResult;
-    ImageProcessor mProcessor;
-    ImageAnalyzer mAnalyzer;
 
 	void init();
 	void processImage();
     void analyzeImage();
     void buildRect();
+    void sortSymbolRects();
 
 };
 
