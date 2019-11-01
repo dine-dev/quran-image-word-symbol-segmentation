@@ -1,5 +1,26 @@
 #include "ImageAnalyzer.h"
 
+const std::list<ImageAnalyzer::MatchTemplate>  ImageAnalyzer::tplsMatchSymbol = {
+            {"resources/template_match/end-of-ayah-symbol-first-page.jpg", 0.43, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-second-page.jpg", 0.43, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-1.jpg", 0.43, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-2.jpg", 0.9, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-11.jpg", 0.43, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-88.jpg", 0.43, "ayah", false},
+            {"resources/template_match/end-of-ayah-symbol-111.jpg", 0.43, "ayah", false},
+            {"resources/template_match/footer-first-page.jpg", 0.7, "footer", true},
+            {"resources/template_match/footer-second-page.jpg", 0.7, "footer", true},
+            {"resources/template_match/footer.jpg", 0.7, "footer", true},
+            {"resources/template_match/header-first-page.jpg", 0.7, "header", true},
+            {"resources/template_match/header.jpg", 0.7, "header", true},
+            {"resources/template_match/basmalah.jpg", 0.6, "basmalah", true},
+            {"resources/template_match/basmalah-first-page.jpg", 0.7, "basmalah", true},
+            {"resources/template_match/basmalah-second-page.jpg", 0.9, "basmalah", true},
+            {"resources/template_match/roubou3.jpg", 0.7, "roubou3", true},
+            {"resources/template_match/roubou3-close.jpg", 0.9, "roubou3", true},
+            {"resources/template_match/soujoud.jpg", 0.7, "soujoud", true},
+        };
+
 bool ImageAnalyzer::rectangleHasIntersection (const cv::Rect & rect_lhs, const cv::Rect & rect_rhs) {
     return ((rect_lhs & rect_rhs).area() > 0);
 }
@@ -64,7 +85,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
 
         for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
             //std::cout
-            outfile << utils::getFileNameWithoutExtension(pathImageQuranPage) << " "
+            outfile << /*utils::getFileNameWithoutExtension(*/pathImageQuranPage/*)*/ << " "
             << indr << " "
             << matchSymbolRectVector[indr].tl().x << " "
             << matchSymbolRectVector[indr].tl().y << " "
@@ -83,20 +104,95 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
         }
         cv::namedWindow("Result window", cv::WINDOW_AUTOSIZE);
         cv::imshow( "Result window", img_disp);
-        cv::waitKey(0);
     }
+
+}
+
+void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std::list<ImageAnalyzer::MatchTemplate> & pathTplMatchSymbols, std::string & matchCoordinateResult, bool showIntermediate) {
+
+    cv::Mat3b img_disp = imageQuranPage.clone();
+    std::vector<cv::Rect> matchSymbolRectVector;
+    std::vector<std::string> matchSymbolTypeVector;
+
+    for (std::list<ImageAnalyzer::MatchTemplate>::const_iterator itTpl = pathTplMatchSymbols.cbegin(); itTpl != pathTplMatchSymbols.cend(); ++itTpl){
+
+        std::string pathEndOfAyahSymbol = itTpl->filePath;
+
+        cv::Mat3b templ = cv::imread(pathEndOfAyahSymbol, cv::IMREAD_COLOR);
+        if( img_disp.size().height < templ.size().height || img_disp.size().width < templ.size().width) {
+            continue;
+        }
+
+        cv::Mat1f result;
+        cv::matchTemplate(img_disp, templ, result, cv::TM_CCOEFF_NORMED);
+
+        cv::threshold(result, result, itTpl->threshold, 1., cv::THRESH_BINARY);
+
+        cv::Mat1b resb;
+        result.convertTo(resb, CV_8U, 255);
+
+        std::vector<std::vector<cv::Point>> contours;
+        cv::findContours(resb, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
+
+        for (int indc = 0; indc < contours.size(); ++indc) {
+            cv::Mat1b mask(result.rows, result.cols, uchar(0));
+            cv::drawContours(mask, contours, indc, cv::Scalar(255), cv::FILLED);
+
+            cv::Point max_point;
+            double max_val;
+            cv::minMaxLoc(result, NULL, &max_val, NULL, &max_point, mask);
+
+            cv::Rect cRect(max_point.x, max_point.y, templ.cols, templ.rows);
+
+            std::vector<cv::Rect>::iterator it = std::find_if(matchSymbolRectVector.begin(), matchSymbolRectVector.end(),
+                [=] (const cv::Rect & rect) { return rectangleHasIntersection(cRect,rect); } );
+
+            // if retangle has no intersection with existing rectangles in vector then add to vector
+            if (it == matchSymbolRectVector.end() || itTpl->canOnlyFoundOnce) {
+                matchSymbolRectVector.push_back(cRect);
+                matchSymbolTypeVector.push_back(itTpl->type);
+            }
+            else if (!itTpl->canOnlyFoundOnce) {
+                (*it) = (*it) & cRect;
+            }
+
+        }
+
+    }
+
+    // output symbole rectangle
+    std::stringstream buffer;
+    for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
+        buffer << indr << " "
+        << matchSymbolRectVector[indr].tl().x << " "
+        << matchSymbolRectVector[indr].tl().y << " "
+        << matchSymbolRectVector[indr].br().x << " "
+        << matchSymbolRectVector[indr].br().y << " "
+        << matchSymbolTypeVector[indr] << "\n";
+    }
+
+    matchCoordinateResult = buffer.str();
 
 }
 
 
 void ImageAnalyzer::segmentWordInPage(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate) {
 
+    
+}
+
+
+void ImageAnalyzer::getPolygonFromAyahSymbolPos(const std::string & pathImageQuranPage, const std::vector<cv::Point> polygon) {
+
+}
+
+void ImageAnalyzer::segmentWordInPolygon(const std::string & pathImageQuranPage, const std::vector<cv::Point> & polygon) {
     cv::Mat3b img = cv::imread(pathImageQuranPage, cv::IMREAD_COLOR), img_disp = img.clone();
     //cv::rectangle(img_disp, cv::Point(481,83), cv::Point(523,137), cv::Scalar( 255, 0, 0 ), 1);
     //cv::rectangle(img_disp, cv::Point(18,23), cv::Point(623,80), cv::Scalar( 255, 0, 0 ), 1);
 
     cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8UC1);
-    cv::Point pts[6] = {
+    std::vector<cv::Point> pts = {
         cv::Point(18, 23),
         cv::Point(623, 23),
         cv::Point(623, 137),
@@ -105,7 +201,7 @@ void ImageAnalyzer::segmentWordInPage(const std::string & pathImageQuranPage, co
         cv::Point(18, 80)
     };
 
-    cv::fillConvexPoly( mask, pts, 6, cv::Scalar(255) );
+    cv::fillConvexPoly( mask, pts.data(), pts.size(), cv::Scalar(255) );
     
     cv::Mat imageDest = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
     imageDest.setTo(cv::Scalar(255,255,255));
@@ -185,8 +281,8 @@ void ImageAnalyzer::segmentWordInPage(const std::string & pathImageQuranPage, co
     cv::imshow("imageDest",src_gray_thr);
     cv::imshow("dilation_dst",dilation_dst);
     cv::imshow("img",img);
-    cv::waitKey(0);
 }
+
 
 
 

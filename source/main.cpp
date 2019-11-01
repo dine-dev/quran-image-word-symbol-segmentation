@@ -1,5 +1,6 @@
 #include "Utils.h"
 #include "Mushaf.h"
+#include "Page.h"
 #include "ImageProcessor.h"
 #include "ImageAnalyzer.h"
 
@@ -42,32 +43,24 @@ int main(int argc, char ** argv) {
     }
 
     if(0) {
-        std::list<ImageAnalyzer::MatchTemplate> tplsMatchSymbol({
-            {"resources/template_match/end-of-ayah-symbol-first-page.jpg", 0.43, "ayah", false},
-            {"resources/template_match/end-of-ayah-symbol-second-page.jpg", 0.43, "ayah", false},
-            {"resources/template_match/end-of-ayah-symbol-1.jpg", 0.43, "ayah", false},
-            {"resources/template_match/end-of-ayah-symbol-11.jpg", 0.43, "ayah", false},
-            {"resources/template_match/end-of-ayah-symbol-88.jpg", 0.43, "ayah", false},
-            {"resources/template_match/end-of-ayah-symbol-111.jpg", 0.43, "ayah", false},
-            {"resources/template_match/footer-first-page.jpg", 0.7, "footer", true},
-            {"resources/template_match/footer-second-page.jpg", 0.7, "footer", true},
-            {"resources/template_match/footer.jpg", 0.7, "footer", true},
-            {"resources/template_match/header-first-page.jpg", 0.7, "header", true},
-            {"resources/template_match/header.jpg", 0.7, "header", true},
-            {"resources/template_match/basmalah.jpg", 0.7, "basmalah", true},
-            {"resources/template_match/basmalah-second-page.jpg", 0.7, "basmalah", true},
-            {"resources/template_match/roubou3.jpg", 0.7, "roubou3", true},
-            {"resources/template_match/soujoud.jpg", 0.7, "soujoud", true},
-        });
-
 
         for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", tplsMatchSymbol, "", showIntermediate);
+            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
         }
     }
 
-    analyzer.segmentWord("resources/hafs_whitened_croped/3.jpg", "resources/match.txt");
-    
+    if(1) {
+        pageList = {77,332,367,446,575,582};
+        for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
+            analyzer.findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
+            Page page((*it), "resources/hafs/"+ std::to_string(*it) + ".jpg");
+            //page.showQuranPage(false);
+            page.showSymbols();
 
+            cv::waitKey(0);
+        }
+        
+    }
+    
     return 0;
 }

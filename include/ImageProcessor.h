@@ -8,9 +8,11 @@ public:
 	ImageProcessor(){};
 	~ImageProcessor(){};
 	void whitenBackground(const std::string & pathImageQuranPage, const cv::Scalar & minHSV, const cv::Scalar & maxHSV, bool showIntermediate = false, std::string pathSavedCroppeddImage = "");
+	void whitenBackground(const cv::Mat & imageQuranPage, const cv::Scalar & minHSV, const cv::Scalar & maxHSV, std::vector<cv::Mat> & preprocessedImage);
 	void cropToTextFrame(const std::string & pathImageQuranPage, bool showIntermediate = false, std::string pathSavedCroppeddImage = "");
+	void cropToTextFrame(const cv::Mat & imageQuranPage, std::vector<cv::Mat> & preprocessedImage);
 	void additionnalCrop(const std::string & pathImageQuranPage, const std::string & leftOrRightSide, const std::string & pathToFrameBorder, bool showIntermediate = false);
-	static bool comp(const std::vector<cv::Point> & contour_lhs, const std::vector<cv::Point> & contour_rhs);
+	void additionnalCrop(const cv::Mat & imageQuranPage, const std::string & leftOrRightSide, const std::string & pathToFrameBorder, std::vector<cv::Mat> & preprocessedImage);
 };
 
 #endif
