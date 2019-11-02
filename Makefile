@@ -3,10 +3,11 @@
 # executable and directories
 EXEC = quran-image-processor
 SDIR = source
-IDIR = -Iinclude -I/Users/brahimboudamouz/Perso/dev/libraries/opencv/include/opencv4
-LDIR = -L/Users/brahimboudamouz/Perso/dev/libraries/opencv/lib
 ODIR = obj
 BDIR = build
+
+IDIR = -Iinclude -I/Users/brahimboudamouz/Perso/dev/libraries/opencv/include/opencv4
+LDIR = -L/Users/brahimboudamouz/Perso/dev/libraries/opencv/lib
 
 #compile and link flags
 CXX     = g++
@@ -17,11 +18,36 @@ LIBS    = $(LDIR) $(LDFLAGS)
 SRC = $(wildcard $(SDIR)/*.cpp)
 OBJ = $(patsubst $(SDIR)/%.cpp, $(ODIR)/%.o, $(SRC))
 
-$(BDIR)/plot: $(OBJ)
+
+###########################
+# compilation and linking #
+###########################
+# build executable - link
+$(BDIR)/$(EXEC): $(OBJ) | $(BDIR)
 	$(CXX) -o $(BDIR)/$(EXEC) $(CFLAGS) $(OBJ) $(LIBS)
 
-$(ODIR)/%.o: $(SDIR)/%.cpp
+# build objects - compile
+$(ODIR)/%.o: $(SDIR)/%.cpp | $(ODIR)
 	$(CXX) $(CFLAGS) -c $< -o $@
 
+
+###############################################
+# build directories if do not already present #
+###############################################
+# build object directory if not already exist
+$(ODIR):
+	echo "[INFO] object directory is missing so building directory:" $(ODIR)
+	mkdir -p $@
+
+# build build directory if not already exist
+$(BDIR):
+	echo "[INFO] build directory is missing so building directory:" $(BDIR)
+	mkdir -p $@
+
+
+############
+# cleaning #
+############
 clean:
 	rm $(ODIR)/* $(BDIR)/*
+
