@@ -1,35 +1,59 @@
+###############################
 # kiss - c++ makefile project #
+###############################
 
-# executable and directories
-EXEC = quran-image-processor
-SDIR = source
-ODIR = obj
-BDIR = build
+###################################
+# executable and main directories #
+###################################
+EXEC := quran-image-processor
+SDIR := source
+IDIR := include
+ODIR := obj
+BDIR := build
 
-IDIR = -Iinclude -I/Users/brahimboudamouz/Perso/dev/libraries/opencv/include/opencv4
-LDIR = -L/Users/brahimboudamouz/Perso/dev/libraries/opencv/lib
+########################
+# additional libraries #
+########################
+IDIR1 := /Users/brahimboudamouz/Perso/dev/libraries/opencv/include/opencv4
+IDIRS := $(IDIR) $(IDIR1) # $(IDIR2) $(IDIR3) ...
+LDIR1 := /Users/brahimboudamouz/Perso/dev/libraries/opencv/lib
+LDIRS := $(LDIR1) # $(LDIR2) $(LDIR3) ...
 
-#compile and link flags
-CXX     = g++
-CFLAGS  = -Wall -std=c++17 $(IDIR)
-LDFLAGS = -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs
-LIBS    = $(LDIR) $(LDFLAGS)
+##########################
+# compile and link flags #
+##########################
+CXX      := clang++
+CXXFLAGS := -Wall -Wextra -std=c++17
+CPPFLAGS := $(foreach inc, $(IDIRS),-I$(inc))
+LIBS     := $(foreach lib, $(LDIRS),-L$(lib))
+LDFLAGS  := $(LIBS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs
 
-SRC = $(wildcard $(SDIR)/*.cpp)
-OBJ = $(patsubst $(SDIR)/%.cpp, $(ODIR)/%.o, $(SRC))
-
+################
+# dependencies #
+################
+SRCS := $(wildcard $(SDIR)/*.cpp)
+OBJS := $(patsubst $(SDIR)/%.cpp, $(ODIR)/%.o, $(SRCS))
+DEPS = $(OBJS:%.o=%.d)
 
 ###########################
 # compilation and linking #
 ###########################
+# list of non-file based targets:
+.PHONY: depend clean all
+
+# default target
+all: $(BDIR)/$(EXEC)
+
 # build executable - link
-$(BDIR)/$(EXEC): $(OBJ) | $(BDIR)
-	$(CXX) -o $(BDIR)/$(EXEC) $(CFLAGS) $(OBJ) $(LIBS)
+$(BDIR)/$(EXEC): $(OBJS) | $(BDIR)
+	$(CXX) -o $(BDIR)/$(EXEC) $(OBJS) $(LDFLAGS)
+
+# include all .d files to track if an header has been modified without any implementation modification
+-include $(DEPS)
 
 # build objects - compile
 $(ODIR)/%.o: $(SDIR)/%.cpp | $(ODIR)
-	$(CXX) $(CFLAGS) -c $< -o $@
-
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MMD -c -o $@ $<
 
 ###############################################
 # build directories if do not already present #
@@ -44,10 +68,14 @@ $(BDIR):
 	echo "[INFO] build directory is missing so building directory:" $(BDIR)
 	mkdir -p $@
 
-
 ############
 # cleaning #
 ############
+# only remove directory content
 clean:
-	rm $(ODIR)/* $(BDIR)/*
+	rm $(ODIR)/*.o $(ODIR)/*.d $(BDIR)/$(EXEC)
+
+# remove directories
+dist-clean:
+	rm $(ODIR)/ $(BDIR)/
 
