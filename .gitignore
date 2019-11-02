@@ -39,3 +39,7 @@ build/
 
 # os dependent
 .DS_Store
+
+# ide dependent
+.cproject
+.project
