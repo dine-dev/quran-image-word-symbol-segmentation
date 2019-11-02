@@ -22,8 +22,8 @@ LDIRS := $(LDIR1) # $(LDIR2) $(LDIR3) ...
 ##########################
 # compile and link flags #
 ##########################
-CXX      := clang++
-CXXFLAGS := -Wall -Wextra -std=c++17
+CXX      := g++
+CXXFLAGS := -g -Wall -Wextra -std=c++17
 CPPFLAGS := $(foreach inc, $(IDIRS),-I$(inc))
 LIBS     := $(foreach lib, $(LDIRS),-L$(lib))
 LDFLAGS  := $(LIBS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs
@@ -77,5 +77,5 @@ clean:
 
 # remove directories
 dist-clean:
-	rm $(ODIR)/ $(BDIR)/
+	rm -r $(ODIR)/ $(BDIR)/
 
