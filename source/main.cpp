@@ -1,8 +1,8 @@
-#include "Utils.h"
-#include "Mushaf.h"
-#include "Page.h"
-#include "ImageProcessor.h"
-#include "ImageAnalyzer.h"
+#include "Utils.hpp"
+#include "Mushaf.hpp"
+#include "Page.hpp"
+#include "ImageProcessor.hpp"
+#include "ImageAnalyzer.hpp"
 
 
 int main(int argc, char ** argv) {

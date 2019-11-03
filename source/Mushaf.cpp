@@ -1,4 +1,4 @@
-#include "Mushaf.h"
+#include "Mushaf.hpp"
 
 Mushaf::Mushaf(std::string imageResourceDirectory, Mushaf::Riwaya riwaya)
 : mImageResourceDirectory(imageResourceDirectory), mRiwaya(riwaya) {}

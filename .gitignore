@@ -40,6 +40,12 @@ build/
 # os dependent
 .DS_Store
 
-# ide dependent
-.cproject
-.project
+# qtcreator
+*.autosave
+*.cflags
+*.config
+*.creator
+*.user
+*.cxxflags
+*.files
+*.includes

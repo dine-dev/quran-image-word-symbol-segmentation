@@ -1,9 +1,9 @@
 #ifndef PAGE_H
 #define PAGE_H
 
-#include "Utils.h"
-#include "ImageProcessor.h"
-#include "ImageAnalyzer.h"
+#include "Utils.hpp"
+#include "ImageProcessor.hpp"
+#include "ImageAnalyzer.hpp"
 
 
 class Page {

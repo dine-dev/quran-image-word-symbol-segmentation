@@ -1,4 +1,4 @@
-#include "ImageProcessor.h"
+#include "ImageProcessor.hpp"
 
 void ImageProcessor::whitenBackground(const std::string & pathImageQuranPage, const cv::Scalar & minHSV, const cv::Scalar & maxHSV, bool showIntermediate, std::string pathSavedCroppeddImage) {
     cv::Mat image = cv::imread(pathImageQuranPage, cv::IMREAD_COLOR);

@@ -1,4 +1,4 @@
-#include "ImageAnalyzer.h"
+#include "ImageAnalyzer.hpp"
 
 bool ImageAnalyzer::rectangleHasIntersection (const cv::Rect & rect_lhs, const cv::Rect & rect_rhs) {
     return ((rect_lhs & rect_rhs).area() > 0);

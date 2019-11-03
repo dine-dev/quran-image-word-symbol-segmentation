@@ -1,4 +1,4 @@
-#include "Page.h"
+#include "Page.hpp"
 
 Page::Page(int pageNumber, std::string imageFilePath) : mPageNumber(pageNumber), mImageFilePath(imageFilePath) {
     init();

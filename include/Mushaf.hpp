@@ -1,7 +1,7 @@
 #ifndef MUSHAF_H
 #define MUSHAF_H
 
-#include "Utils.h"
+#include "Utils.hpp"
 
 class Mushaf {
 public:

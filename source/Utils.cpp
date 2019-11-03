@@ -1,4 +1,4 @@
-#include "Utils.h"
+#include "Utils.hpp"
 
 bool utils::dirExists(const std::string & path) {
 	struct stat info;

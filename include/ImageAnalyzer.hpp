@@ -1,7 +1,7 @@
 #ifndef IMAGE_ANALYZER_H
 #define IMAGE_ANALYZER_H
 
-#include "Utils.h"
+#include "Utils.hpp"
 
 namespace ImageAnalyzer {
 
