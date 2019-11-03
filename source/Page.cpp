@@ -2,10 +2,6 @@
 
 Page::Page(int pageNumber, std::string imageFilePath) : mPageNumber(pageNumber), mImageFilePath(imageFilePath) {
     init();
-    processImage();
-    analyzeImage();
-    buildRect();
-    sortSymbolRects();
 };
 
 Page::~Page() {};
@@ -37,6 +33,10 @@ void Page::showSymbols() {
 
 void Page::init() {
 	// init image processor and analyzer
+    processImage();
+    analyzeImage();
+    buildRect();
+    sortSymbolRects();
 }
 
 void Page::processImage() {

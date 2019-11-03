@@ -48,9 +48,9 @@ int main(int argc, char ** argv) {
     }
 
     if(1) {
-        pageList = {582};
+        //pageList = {370, 445, 498, 521, 564, 582, 585, 592, 603};
         for (std::list<int>::iterator it = pageList.begin(); it != pageList.end(); ++it){
-            ImageAnalyzer::findSymbolInImage("resources/hafs_whitened_croped/"+ std::to_string(*it) +".jpg", ImageAnalyzer::tplsMatchSymbol, "", showIntermediate);
+            std::cout << "page " << (*it) << std::endl;
             Page page((*it), "resources/hafs/"+ std::to_string(*it) + ".jpg");
             //page.showQuranPage(false);
             page.showSymbols();

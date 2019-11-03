@@ -32,7 +32,9 @@ namespace ImageAnalyzer {
             {"resources/template_match/roubou3.jpg", 0.7, "roubou3", true},
             {"resources/template_match/roubou3-close.jpg", 0.9, "roubou3", true},
             {"resources/template_match/soujoud.jpg", 0.7, "soujoud", true},
-        };
+    };
+
+    const int MIN_AREA = 200;
 
     bool rectangleHasIntersection (const cv::Rect & lhs, const cv::Rect & rhs);
     void findSymbolInImage(const std::string & pathImageQuranPage, const std::list<MatchTemplate> & pathEndOfAyahSymbol, const std::string & pathMatchCoordinate = "", bool showIntermediate = false);

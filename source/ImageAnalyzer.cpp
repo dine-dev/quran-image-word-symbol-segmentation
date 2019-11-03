@@ -31,7 +31,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(resb, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
-        for (int indc = 0; indc < contours.size(); ++indc) {
+        for (size_t indc = 0; indc < contours.size(); ++indc) {
             cv::Mat1b mask(result.rows, result.cols, uchar(0));
             cv::drawContours(mask, contours, indc, cv::Scalar(255), cv::FILLED);
 
@@ -62,7 +62,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
         std::ofstream outfile;
         outfile.open(pathMatchCoordinate, std::ios_base::app);
 
-        for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
+        for (size_t indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
             //std::cout
             outfile << /*utils::getFileNameWithoutExtension(*/pathImageQuranPage/*)*/ << " "
             << indr << " "
@@ -77,7 +77,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
     }
 
     if (showIntermediate) {
-        for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
+        for (size_t indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
             cv::rectangle(img_disp, matchSymbolRectVector[indr], cv::Scalar(0,0,255), 3);
 
         }
@@ -113,7 +113,7 @@ void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std:
         std::vector<std::vector<cv::Point>> contours;
         cv::findContours(resb, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
-        for (int indc = 0; indc < contours.size(); ++indc) {
+        for (size_t indc = 0; indc < contours.size(); ++indc) {
             cv::Mat1b mask(result.rows, result.cols, uchar(0));
             cv::drawContours(mask, contours, indc, cv::Scalar(255), cv::FILLED);
 
@@ -132,7 +132,11 @@ void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std:
                 matchSymbolTypeVector.push_back(itTpl->type);
             }
             else if (!itTpl->canOnlyFoundOnce) {
-                (*it) = (*it) & cRect;
+                // check intersection greater than min area
+                cv::Rect iRect = (*it) & cRect;
+                if(iRect.area() > MIN_AREA) {
+                    (*it) = iRect;
+                }
             }
 
         }
@@ -141,7 +145,7 @@ void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std:
 
     // output symbole rectangle
     std::stringstream buffer;
-    for (int indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
+    for (size_t indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
         buffer << indr << " "
         << matchSymbolRectVector[indr].tl().x << " "
         << matchSymbolRectVector[indr].tl().y << " "

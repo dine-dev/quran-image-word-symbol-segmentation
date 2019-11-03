@@ -23,10 +23,18 @@ LDIRS := $(LDIR1) # $(LDIR2) $(LDIR3) ...
 # compile and link flags #
 ##########################
 CXX      := g++
-CXXFLAGS := -g -Wall -Wextra -std=c++17
+CXXFLAGS := -Wall -Wextra -std=c++17
 CPPFLAGS := $(foreach inc, $(IDIRS),-I$(inc))
 LIBS     := $(foreach lib, $(LDIRS),-L$(lib))
 LDFLAGS  := $(LIBS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs
+
+# release vs debug (debug by default)
+DEBUG ?=
+ifeq ($(DEBUG), 1)
+    CXXFLAGS += -DDEBUG
+else
+    CXXFLAGS += -O3 -DNDEBUG
+endif
 
 ################
 # dependencies #
