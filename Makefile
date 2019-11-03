@@ -14,9 +14,9 @@ BDIR := build
 ########################
 # additional libraries #
 ########################
-IDIR1 := /Users/brahimboudamouz/Perso/dev/libraries/opencv/include/opencv4
+IDIR1 := /Users/brahimboudamouz/projects/libraries/opencv/include/opencv4
 IDIRS := $(IDIR) $(IDIR1) # $(IDIR2) $(IDIR3) ...
-LDIR1 := /Users/brahimboudamouz/Perso/dev/libraries/opencv/lib
+LDIR1 := /Users/brahimboudamouz/projects/libraries/opencv/lib
 LDIRS := $(LDIR1) # $(LDIR2) $(LDIR3) ...
 
 ##########################
@@ -29,7 +29,7 @@ LIBS     := $(foreach lib, $(LDIRS),-L$(lib))
 LDFLAGS  := $(LIBS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_imgcodecs
 
 # release vs debug (debug by default)
-DEBUG ?=
+DEBUG ?= 1
 ifeq ($(DEBUG), 1)
     CXXFLAGS += -DDEBUG
 else
