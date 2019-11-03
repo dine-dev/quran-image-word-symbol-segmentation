@@ -42,7 +42,7 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
             cv::Rect cRect(max_point.x, max_point.y, templ.cols, templ.rows);
 
             std::vector<cv::Rect>::iterator it = std::find_if(matchSymbolRectVector.begin(), matchSymbolRectVector.end(),
-                [=] (const cv::Rect & rect) { return rectangleHasIntersection(cRect,rect); } );
+                                                              [=] (const cv::Rect & rect) { return rectangleHasIntersection(cRect,rect); } );
 
             // if retangle has no intersection with existing rectangles in vector then add to vector
             if (it == matchSymbolRectVector.end() || itTpl->canOnlyFoundOnce) {
@@ -65,12 +65,12 @@ void ImageAnalyzer::findSymbolInImage(const std::string & pathImageQuranPage, co
         for (size_t indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
             //std::cout
             outfile << /*utils::getFileNameWithoutExtension(*/pathImageQuranPage/*)*/ << " "
-            << indr << " "
-            << matchSymbolRectVector[indr].tl().x << " "
-            << matchSymbolRectVector[indr].tl().y << " "
-            << matchSymbolRectVector[indr].br().x << " "
-            << matchSymbolRectVector[indr].br().y << " "
-            << matchSymbolTypeVector[indr] << std::endl;
+                    << indr << " "
+                    << matchSymbolRectVector[indr].tl().x << " "
+                    << matchSymbolRectVector[indr].tl().y << " "
+                    << matchSymbolRectVector[indr].br().x << " "
+                    << matchSymbolRectVector[indr].br().y << " "
+                    << matchSymbolTypeVector[indr] << std::endl;
 
         }
 
@@ -124,7 +124,7 @@ void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std:
             cv::Rect cRect(max_point.x, max_point.y, templ.cols, templ.rows);
 
             std::vector<cv::Rect>::iterator it = std::find_if(matchSymbolRectVector.begin(), matchSymbolRectVector.end(),
-                [=] (const cv::Rect & rect) { return rectangleHasIntersection(cRect,rect); } );
+                                                              [=] (const cv::Rect & rect) { return rectangleHasIntersection(cRect,rect); } );
 
             // if retangle has no intersection with existing rectangles in vector then add to vector
             if (it == matchSymbolRectVector.end() || itTpl->canOnlyFoundOnce) {
@@ -147,11 +147,11 @@ void ImageAnalyzer::findSymbolInImage(const cv::Mat & imageQuranPage, const std:
     std::stringstream buffer;
     for (size_t indr = 0; indr < matchSymbolRectVector.size(); ++indr) {
         buffer << indr << " "
-        << matchSymbolRectVector[indr].tl().x << " "
-        << matchSymbolRectVector[indr].tl().y << " "
-        << matchSymbolRectVector[indr].br().x << " "
-        << matchSymbolRectVector[indr].br().y << " "
-        << matchSymbolTypeVector[indr] << "\n";
+               << matchSymbolRectVector[indr].tl().x << " "
+               << matchSymbolRectVector[indr].tl().y << " "
+               << matchSymbolRectVector[indr].br().x << " "
+               << matchSymbolRectVector[indr].br().y << " "
+               << matchSymbolTypeVector[indr] << "\n";
     }
 
     matchCoordinateResult = buffer.str();
@@ -188,7 +188,7 @@ void ImageAnalyzer::segmentWordInPolygon(const std::string & pathImageQuranPage,
     
     cv::Mat imageDest = cv::Mat::zeros(img.rows, img.cols, CV_8UC3);
     imageDest.setTo(cv::Scalar(255,255,255));
-    img.copyTo(imageDest, mask); 
+    img.copyTo(imageDest, mask);
     
     //cv::imshow("mask",mask);
     //cv::imshow("imageDest",imageDest);
@@ -226,13 +226,13 @@ void ImageAnalyzer::segmentWordInPolygon(const std::string & pathImageQuranPage,
 
         // check intersection of curret rectangle with other present rectangle
         std::vector<cv::Rect>::iterator it = std::find_if(contour_rect.begin(), contour_rect.end(),
-                [=] (const cv::Rect & cRect) { return rectangleHasIntersection(cRect,rect); } );
+                                                          [=] (const cv::Rect & cRect) { return rectangleHasIntersection(cRect,rect); } );
         
         // if curretn rectangle does not have intersection with other rectangles just add it
         if(it == contour_rect.end()){
             contour_rect.push_back(rect);
         }
-        // if current rectangle has an intersection with other rectangles 
+        // if current rectangle has an intersection with other rectangles
         else {
             cv::Rect iRect = (*it);
 
@@ -259,11 +259,27 @@ void ImageAnalyzer::segmentWordInPolygon(const std::string & pathImageQuranPage,
         
         // Draw the contours rectangle
         cv::rectangle(img, contour_rect[idx].tl(), contour_rect[idx].br(), cv::Scalar(255, 0, 0));
-    }    
+    }
     
     cv::imshow("imageDest",src_gray_thr);
     cv::imshow("dilation_dst",dilation_dst);
     cv::imshow("img",img);
+}
+
+
+void ImageAnalyzer::getTextFrameRect(const cv::Mat & imageQuranPage, cv::Rect & textFrame) {
+    cv::Mat src_gray_thr;
+    cv::cvtColor(imageQuranPage, src_gray_thr, cv::COLOR_BGR2GRAY);
+    cv::threshold( src_gray_thr, src_gray_thr, 240, 255, cv::THRESH_BINARY);
+
+    // for src image determine contours then find max area contour and the associated bounding rectangle
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    std::vector<std::vector<cv::Point> >::const_iterator result;
+
+    cv::findContours(src_gray_thr, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+    result = std::max_element(contours.begin(), contours.end(), utils::comp);
+    textFrame = cv::boundingRect((*result));
 }
 
 

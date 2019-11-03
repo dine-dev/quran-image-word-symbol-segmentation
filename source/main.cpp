@@ -53,7 +53,7 @@ int main(int argc, char ** argv) {
             std::cout << "page " << (*it) << std::endl;
             Page page((*it), "resources/hafs/"+ std::to_string(*it) + ".jpg");
             //page.showQuranPage(false);
-            page.showSymbols();
+            //page.showSymbols();
 
             cv::waitKey(0);
         }

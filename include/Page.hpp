@@ -47,7 +47,7 @@ private:
 	void init();
 	void processImage();
     void analyzeImage();
-    void buildRect();
+    void buildRectFromString();
     void sortSymbolRects();
 
 };

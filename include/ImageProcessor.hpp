@@ -12,6 +12,6 @@ namespace ImageProcessor {
 	void additionnalCrop(const std::string & pathImageQuranPage, const std::string & leftOrRightSide, const std::string & pathToFrameBorder, bool showIntermediate = false);
 	void additionnalCrop(const cv::Mat & imageQuranPage, const std::string & leftOrRightSide, const std::string & pathToFrameBorder, std::vector<cv::Mat> & preprocessedImage);
 
-};
+}
 
 #endif

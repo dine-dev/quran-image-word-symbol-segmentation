@@ -42,7 +42,8 @@ namespace ImageAnalyzer {
     void segmentWordInPage(const std::string & pathImageQuranPage, const std::string & pathMatchCoordinate);
     void segmentWordInPolygon(const std::string & pathImageQuranPage, const std::vector<cv::Point> & polygon);
     void getPolygonFromAyahSymbolPos(const std::string & pathImageQuranPage, const std::vector<cv::Point> polygon);
+    void getTextFrameRect(const cv::Mat & imageQuranPage, cv::Rect & textFrame);
 
-};
+}
 
 #endif

@@ -1,10 +1,12 @@
 #include "Page.hpp"
 
+#include <Page.hpp>
+
 Page::Page(int pageNumber, std::string imageFilePath) : mPageNumber(pageNumber), mImageFilePath(imageFilePath) {
     init();
-};
+}
 
-Page::~Page() {};
+Page::~Page() {}
 
 void Page::showQuranPage(bool displayAllProcessedImage) {
     
@@ -35,7 +37,7 @@ void Page::init() {
 	// init image processor and analyzer
     processImage();
     analyzeImage();
-    buildRect();
+    buildRectFromString();
     sortSymbolRects();
 }
 
@@ -67,7 +69,7 @@ void Page::analyzeImage() {
     ImageAnalyzer::findSymbolInImage(mProcessedImage, ImageAnalyzer::tplsMatchSymbol, mMatchSymbolResult, true);
 }
 
-void Page::buildRect() {
+void Page::buildRectFromString() {
     std::vector<std::string> splited_by_line, splited_by_space;
     utils::split_string(mMatchSymbolResult, "\n", splited_by_line);
 
@@ -85,8 +87,12 @@ void Page::buildRect() {
 }
 
 void Page::sortSymbolRects() {
-    //std::cout << (mMatchSymbols[0].rect.tl().y < mMatchSymbols[1].rect.tl().y) << std::endl;
     std::sort(mMatchSymbols.begin(), mMatchSymbols.end());
+    cv::Rect textFrame;
+    ImageAnalyzer::getTextFrameRect(mProcessedImage, textFrame);
+    cv::Mat img_disp = mProcessedImage.clone();
+    cv::rectangle(img_disp, textFrame, cv::Scalar(0,0,255), 2);
+    cv::imshow( "Text frame window", img_disp);
 }
 
 
